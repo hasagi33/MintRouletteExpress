@@ -1,5 +1,5 @@
 const { sha3_512 } = require("js-sha3");
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "./.env" });
 
 function makeToken(username) {
