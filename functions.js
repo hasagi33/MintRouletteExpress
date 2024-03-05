@@ -53,4 +53,20 @@ function unHashSaltPassword(pw, salt) {
   return hashed + salt;
 }
 
-module.exports = { makeID, hashSaltPassword, unHashSaltPassword, makeToken };
+function errorHandler(statusCode) {
+  let error = {
+    message: "bad",
+  };
+  if (statusCode === 401) {
+    error["message"] = "Unauthorized Access";
+  }
+  return error;
+}
+
+module.exports = {
+  makeID,
+  hashSaltPassword,
+  unHashSaltPassword,
+  makeToken,
+  errorHandler,
+};

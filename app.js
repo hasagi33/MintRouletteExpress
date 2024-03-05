@@ -9,6 +9,8 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var userSignupRouter = require("./routes/userSignup");
 var userLoginRouter = require("./routes/userLogin");
+var spinWheelRouter = require("./routes/spinWheel");
+var placeBetRouter = require("./routes/placeBet");
 
 var app = express();
 
@@ -22,6 +24,8 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/userLogin", userLoginRouter);
 app.use("/userSignup", userSignupRouter);
+app.use("/spinWheel", spinWheelRouter);
+app.use("/placeBet", placeBetRouter);
 
 const userTableCreate = async () => {
   try {
