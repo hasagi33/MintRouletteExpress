@@ -13,6 +13,8 @@
     "git-filter-repo": "^0.0.30",
     "js-sha3": "^0.9.3",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "~1.9.1"
+    "math": "^0.0.3",
+    "morgan": "~1.9.1",
+    "pg": "^8.11.3"
   }
 }
