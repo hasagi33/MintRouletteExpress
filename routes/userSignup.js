@@ -43,7 +43,7 @@ router.post("/", async function (req, res) {
           [newUserId, username, email, utility.hashSaltPassword(userPW)]
         );
         res.statusCode = 200;
-        res.json({ success: "true" }); //pitat asada
+        res.json({ success: "true" });
       } else {
         res.statusCode = 400;
         res.json({ success: "false", error: "User exists" });

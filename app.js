@@ -1,16 +1,22 @@
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+// const workerSpawner=require("./workers/workerSpawner");
+const utility=require("./functions");
 const jwt = require("jsonwebtoken");
 const pool = require("./db/pool").pool;
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var userSignupRouter = require("./routes/userSignup");
-var userLoginRouter = require("./routes/userLogin");
-var spinWheelRouter = require("./routes/spinWheel");
-var placeBetRouter = require("./routes/placeBet");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const userSignupRouter = require("./routes/userSignup");
+const userLoginRouter = require("./routes/userLogin");
+const spinWheelRouter = require("./routes/spinWheel");
+const placeBetRouter = require("./routes/placeBet");
+const createWorker = require("./workers/workerSpawner");
+
+require("dotenv").config({ path: "/.env" });
+
 
 var app = express();
 
@@ -43,5 +49,7 @@ const userTableCreate = async () => {
 };
 
 userTableCreate();
+// createWorker();
+// setInterval(createWorker,100)
 
 module.exports = app;

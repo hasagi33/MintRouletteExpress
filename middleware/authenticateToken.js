@@ -13,7 +13,7 @@ const authenticateToken = (req, res, next) => {
     next();
   } catch {
     console.log("unauthorized");
-    res.statusCode = 401;
+    res.statusCode = 403;
     // res.json(errorHandler(res.statusCode));
     next();
   }

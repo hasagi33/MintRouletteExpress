@@ -1,18 +1,38 @@
 const { workerData, parentPort } = require('worker_threads')
 const math=require('math')
 
-// random number prime checker
-let random=math.ceil(math.random()*1000)
-let isPrime=true;
+let randomInner=math.floor(math.random()*40)+1
+let randomOuter=math.floor(math.random()*40)+1
+let colorInner="";
+let colorOuter="";
 
-for (let i=2;i<=(math.sqrt(random));i+=2){
-    if(random%i===0) {
-        isPrime=false
-    }
-    if(i===2){i--}
+
+if(randomInner%2===0){
+    colorInner="purple"
+}else if((randomInner+1)%4===0){
+    colorInner="white"
+}else if(((randomInner-1)%4===0)&&((randomInner+3)%8!==0)&&randomInner!==1){
+    colorInner="red"
+}else if((randomInner-1)%4===0&&randomInner!==1){
+    colorInner="pink"
+}else if(randomInner===1){
+    colorInner="green"
+}
+
+if(randomOuter%2===0){
+    colorOuter="purple"
+}else if((randomOuter+1)%4===0){
+    colorOuter="white"
+}else if(((randomOuter-1)%4===0)&&((randomOuter+3)%8!==0)&&randomOuter!==1){
+    colorOuter="red"
+}else if((randomOuter-1)%4===0&&randomOuter!==1){
+    colorOuter="pink"
+}else if(randomOuter===1){
+    colorOuter="green"
 }
 
 parentPort.postMessage({
-    number:random,
-    isPrime: isPrime
+    numberInner:randomInner,
+    numberOuter:randomOuter,
+    // isPrime: isPrime
 })

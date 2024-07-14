@@ -1,7 +1,9 @@
 const { Worker } = require('worker_threads');
+require("dotenv").config({ path: "./.env" });
+
 
 function createWorker (workerData) {
-    const worker = new Worker('./rouletteWorker.js', { workerData })
+    const worker = new Worker(process.env.ROULETTEWORKER, { workerData })
     worker.on('error', (err) => { throw err })
     worker.on('message', (msg) => {
         console.log(msg)
@@ -16,4 +18,6 @@ function createWorker (workerData) {
 }
 // createWorker()
 
-setInterval(createWorker,1000)
+// setInterval(createWorker,1000)
+
+module.exports = createWorker;
