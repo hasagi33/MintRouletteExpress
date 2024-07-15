@@ -31,6 +31,8 @@ if(randomOuter%2===0){
     colorOuter="green"
 }
 
+// console.log(workerData)
+
 parentPort.postMessage({
     numberInner:randomInner,
     numberOuter:randomOuter,

@@ -6,16 +6,20 @@ require("dotenv").config({ path: "./.env" });
 
 const authenticateToken = (req, res, next) => {
   try {
-    let token = req.headers.authorization?.split(" ")[1];
+    let token=req.headers.token;
+    // let token = req.headers.token.split(".")[1];
     let decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
 
+    console.log(decoded)
+    //CHANGE TO SECURE ID
+    req.body.username=decoded.username
     next();
   } catch {
     console.log("unauthorized");
     res.statusCode = 403;
+    res.send()
     // res.json(errorHandler(res.statusCode));
-    next();
+    // next();
   }
 };
 

@@ -14,6 +14,9 @@ const userLoginRouter = require("./routes/userLogin");
 const spinWheelRouter = require("./routes/spinWheel");
 const placeBetRouter = require("./routes/placeBet");
 const createWorker = require("./workers/workerSpawner");
+let bets=require("./routes/placeBet").bets;
+
+
 
 require("dotenv").config({ path: "/.env" });
 
@@ -47,9 +50,10 @@ const userTableCreate = async () => {
     console.log(error);
   }
 };
-
 userTableCreate();
-// createWorker();
-// setInterval(createWorker,100)
+
+createWorker();
+// setInterval(createWorker(bets),4000)
+console.log(bets)
 
 module.exports = app;
