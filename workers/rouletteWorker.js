@@ -1,11 +1,21 @@
 const { workerData, parentPort } = require('worker_threads')
 const math=require('math')
 
+
 let randomInner=math.floor(math.random()*40)+1
 let randomOuter=math.floor(math.random()*40)+1
 let colorInner="";
 let colorOuter="";
 
+// port2.postMessage({ foo: 'bar' })
+
+// port1.on('message', (message) => console.log('receivedAAAAAAAAAAA', message));
+parentPort.on('message', (message) => {
+    console.log(`Received message from main thread: ${message}`);
+
+    // Do some work and send a message back to the main thread
+    parentPort.postMessage('Hello, main thread!');
+});
 
 if(randomInner%2===0){
     colorInner="purple"

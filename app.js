@@ -6,6 +6,8 @@ const logger = require("morgan");
 const utility=require("./functions");
 const jwt = require("jsonwebtoken");
 const pool = require("./db/pool").pool;
+// const createWorker = require("./workers/workerSpawner");
+
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -13,15 +15,10 @@ const userSignupRouter = require("./routes/userSignup");
 const userLoginRouter = require("./routes/userLogin");
 const spinWheelRouter = require("./routes/spinWheel");
 const placeBetRouter = require("./routes/placeBet");
-const createWorker = require("./workers/workerSpawner");
-let bets=require("./routes/placeBet").bets;
-
-
 
 require("dotenv").config({ path: "/.env" });
 
-
-var app = express();
+const app = express();
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -52,8 +49,6 @@ const userTableCreate = async () => {
 };
 userTableCreate();
 
-createWorker();
-// setInterval(createWorker(bets),4000)
-console.log(bets)
+
 
 module.exports = app;
