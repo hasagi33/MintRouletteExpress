@@ -16,7 +16,7 @@ function createWorker (workerData,em) {
     });
     // return worker
     em.on('FirstEvent',function (data) {
-        worker.postMessage('Hello, worker!');
+        worker.postMessage(data);
     })
 }
 

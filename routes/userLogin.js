@@ -5,8 +5,9 @@ const utility = require("../functions");
 const authenticateToken = require("../middleware/authenticateToken");
 
 router.post("/", async function (req, res, next) {
+  console.log("LOGIN REQUEST")
   let username = req.body.name;
-  let userPW = req.body.password1;
+  let userPW = req.body.password;
   const findPwInDb = await pool.query(
     'SELECT * FROM "users" WHERE username=($1)',
     [username]
@@ -16,6 +17,7 @@ router.post("/", async function (req, res, next) {
 
   if (findPwInDb.rowCount == 1 && findPwInDb.rows[0].hashedPW == userHashedPW) {
     let jwToken = utility.makeToken(username);
+    console.log("SUCCESSFUL LOGIN", username)
     res.statusCode = 200;
     res.json({ success: "true", token: jwToken });
   } else {

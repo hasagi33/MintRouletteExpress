@@ -2,11 +2,10 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-// const workerSpawner=require("./workers/workerSpawner");
 const utility=require("./functions");
 const jwt = require("jsonwebtoken");
 const pool = require("./db/pool").pool;
-// const createWorker = require("./workers/workerSpawner");
+const cors = require('cors');
 
 
 const indexRouter = require("./routes/index");
@@ -19,6 +18,9 @@ const placeBetRouter = require("./routes/placeBet");
 require("dotenv").config({ path: "/.env" });
 
 const app = express();
+
+
+app.use(cors());
 
 app.use(logger("dev"));
 app.use(express.json());

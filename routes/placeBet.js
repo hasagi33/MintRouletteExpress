@@ -7,17 +7,14 @@ const authenticateToken = require("../middleware/authenticateToken");
 const createWorker=require("../workers/workerSpawner")
 
 
-let bets=[5]
+let bets=[]
 let em=new events.EventEmitter();
 
 createWorker(bets,em)
 
 router.post("/", authenticateToken, async function (req, res, next) {
-    console.log("Sent Bet req")
+    console.log("placeBet request received")
 
-    em.emit('FirstEvent','Messssssage')
-    em.emit('FirstEvent','Messssssage')
-    em.emit('FirstEvent','Messssssage')
 
 
 
@@ -32,7 +29,10 @@ router.post("/", authenticateToken, async function (req, res, next) {
     if(findPwInDb.rows[0].balance>=betAmount){
         bets.push([betAmount,betColor,username])
     }
-    console.log(bets)
+    em.emit('FirstEvent',bets)
+
+    // bets=[]
+    // console.log(bets)
     res.send();
 });
 
