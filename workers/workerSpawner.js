@@ -9,14 +9,19 @@ function createWorker (workerData,em) {
     worker.on('message', (msg) => {
         console.log(msg)
 
+        em.emit('SendBets',msg);
+
         // worker.terminate();
     });
+
     worker.on('exit', () => {
 
     });
     // return worker
     em.on('FirstEvent',function (data) {
-        worker.postMessage(data);
+        console.log("FIRSTEVENT")
+        console.log(data)
+        worker.postMessage('message',"data");
     })
 }
 

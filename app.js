@@ -52,5 +52,4 @@ const userTableCreate = async () => {
 userTableCreate();
 
 
-
 module.exports = app;

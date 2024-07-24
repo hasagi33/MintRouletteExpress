@@ -15,9 +15,6 @@ createWorker(bets,em)
 router.post("/", authenticateToken, async function (req, res, next) {
     console.log("placeBet request received")
 
-
-
-
     betAmount=req.body.betAmount
     betColor=req.body.betColor
     username=req.body.username
@@ -26,15 +23,21 @@ router.post("/", authenticateToken, async function (req, res, next) {
         'SELECT * FROM "users" WHERE username=($1)', [username]
     );
 
-    if(findPwInDb.rows[0].balance>=betAmount){
+    if(findPwInDb.rows[0].balance>=betAmount||true){  // DISABLE TRUE----
         bets.push([betAmount,betColor,username])
     }
-    em.emit('FirstEvent',bets)
+    console.log(bets)
+    // em.emit('FirstEvent',bets)
 
-    // bets=[]
-    // console.log(bets)
+
+
     res.send();
 });
 
+em.on('SendBets',function(data){
+    console.log("SEND BETS FROM PLACEBET")
+    em.emit('FirstEvent',bets)
+    bets=[]
+})
 
 module.exports = router;
