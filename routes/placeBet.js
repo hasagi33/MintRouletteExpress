@@ -34,9 +34,9 @@ router.post("/", authenticateToken, async function (req, res, next) {
     res.send();
 });
 
-em.on('SendBets',function(data){
+em.on('SendBets',function(){
     console.log("SEND BETS FROM PLACEBET")
-    em.emit('FirstEvent',bets)
+    em.emit('FirstEvent',Object.assign({}, bets))
     bets=[]
 })
 

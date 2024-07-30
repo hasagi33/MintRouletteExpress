@@ -9,7 +9,11 @@ function createWorker (workerData,em) {
     worker.on('message', (msg) => {
         console.log(msg)
 
-        em.emit('SendBets',msg);
+        if(Object.keys(msg).length === 0){
+            em.emit('SendBets',msg);
+        }
+
+        // em.emit('SendBets',msg);
 
         // worker.terminate();
     });
@@ -21,7 +25,7 @@ function createWorker (workerData,em) {
     em.on('FirstEvent',function (data) {
         console.log("FIRSTEVENT")
         console.log(data)
-        worker.postMessage('message',"data");
+        worker.postMessage( data );
     })
 }
 

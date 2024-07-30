@@ -7,23 +7,33 @@ const pinkMult=5.6;
 const greenMult=16.0;
 let currentBets=[]
 
-parentPort.on('message', ({bets}) => {
+setInterval(()=>{
+    parentPort.postMessage({});
+    spin(currentBets)},10000)
+
+
+parentPort.on('message', (bets) => {
     console.log('Received message from main thread:' ,bets);
 
-    currentBets.push(bets)
+    for (const [key, value] of Object.entries(bets)) {
+        console.log(`${key}: ${value}`);
+        currentBets.push(value);
+    }
+
     console.log(currentBets,"CURRENTBETS")
 });
 
-function Spin(bets){
+function spin(bets){
     let rollNumberValues = rollNumbers()  //roll random numbers, returns as array
     let randomInner = rollNumberValues[0]
         , randomOuter = rollNumberValues[1]
         , colorInner = rollNumberValues[2]
         , colorOuter = rollNumberValues[3]
 
+    console.log(bets,"BETS FROM PLACEBET")
 
     let wins=calculateWinnings(bets, colorInner, colorOuter)
-    console.log(wins)
+    console.log(wins,"SPIN WINS HERE")
     parentPort.postMessage({
         numberInner: randomInner,
         numberOuter: randomOuter,
@@ -31,9 +41,10 @@ function Spin(bets){
         colorOuter: colorOuter,
         wins:wins
     })
+
+    currentBets=[]
 }
 
-setInterval(()=>{Spin(currentBets)},10000)
 
 function rollNumbers() {
     let randomInner,randomOuter,colorOuter,colorInner
@@ -46,6 +57,8 @@ function rollNumbers() {
 
 function calculateWinnings(bets,colorInner,colorOuter){
     let winnings=[]
+
+    console.log(bets,"BETS HEREEEEE")
 
     bets.forEach((element,index)=>{
         let win=element[0];
@@ -89,6 +102,7 @@ function calculateWinnings(bets,colorInner,colorOuter){
                 break;
              }
         }
+        console.log(winnings,"WINNINGS HERE ")
         if(win===startBet){win=0}
         winnings.push([win,bets[index][2]])
     })
