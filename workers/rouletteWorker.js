@@ -8,7 +8,6 @@ const greenMult=16.0;
 let currentBets=[]
 
 setInterval(()=>{
-    parentPort.postMessage({});
     spin(currentBets)},10000)
 
 
@@ -16,11 +15,10 @@ parentPort.on('message', (bets) => {
     console.log('Received message from main thread:' ,bets);
 
     for (const [key, value] of Object.entries(bets)) {
-        console.log(`${key}: ${value}`);
         currentBets.push(value);
+        console.log(key,"ADDED BET TO CURRENTBETS")
     }
 
-    console.log(currentBets,"CURRENTBETS")
 });
 
 function spin(bets){
@@ -102,7 +100,6 @@ function calculateWinnings(bets,colorInner,colorOuter){
                 break;
              }
         }
-        console.log(winnings,"WINNINGS HERE ")
         if(win===startBet){win=0}
         winnings.push([win,bets[index][2]])
     })

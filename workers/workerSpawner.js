@@ -8,22 +8,14 @@ function createWorker (workerData,em) {
     worker.on('error', (err) => { throw err })
     worker.on('message', (msg) => {
         console.log(msg)
-
-        if(Object.keys(msg).length === 0){
-            em.emit('SendBets',msg);
-        }
-
-        // em.emit('SendBets',msg);
-
-        // worker.terminate();
     });
 
     worker.on('exit', () => {
 
     });
     // return worker
-    em.on('FirstEvent',function (data) {
-        console.log("FIRSTEVENT")
+    em.on('NewBet',function (data) {
+        console.log("NewBet")
         console.log(data)
         worker.postMessage( data );
     })

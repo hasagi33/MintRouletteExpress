@@ -7,13 +7,14 @@ const authenticateToken = require("../middleware/authenticateToken");
 const createWorker=require("../workers/workerSpawner")
 
 
-let bets=[]
 let em=new events.EventEmitter();
 
-createWorker(bets,em)
+createWorker({},em)
 
 router.post("/", authenticateToken, async function (req, res, next) {
     console.log("placeBet request received")
+    let bets=[]
+
 
     betAmount=req.body.betAmount
     betColor=req.body.betColor
@@ -25,19 +26,12 @@ router.post("/", authenticateToken, async function (req, res, next) {
 
     if(findPwInDb.rows[0].balance>=betAmount||true){  // DISABLE TRUE----
         bets.push([betAmount,betColor,username])
+        em.emit('NewBet',Object.assign({}, bets))
     }
     console.log(bets)
-    // em.emit('FirstEvent',bets)
-
 
 
     res.send();
 });
-
-em.on('SendBets',function(){
-    console.log("SEND BETS FROM PLACEBET")
-    em.emit('FirstEvent',Object.assign({}, bets))
-    bets=[]
-})
 
 module.exports = router;
