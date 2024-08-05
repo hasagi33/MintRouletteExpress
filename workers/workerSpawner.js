@@ -13,10 +13,6 @@ const port = 443;
 
 io.on("connection", (socket) => {
   console.log("a user connected");
-  socket.on("message", (msg) => {
-    console.log("a message detected");
-    io.emit("chat message", "acknowledged");
-  });
 });
 
 server.listen(port);

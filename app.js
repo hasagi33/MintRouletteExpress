@@ -7,6 +7,14 @@ const jwt = require("jsonwebtoken");
 const pool = require("./db/pool").pool;
 const cors = require("cors");
 
+const app = express();
+const http = require("http");
+const { static } = require("express");
+const server = http.createServer(app);
+
+const io = require("socket.io")(server, {});
+const port = 8080;
+
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const userSignupRouter = require("./routes/userSignup");
@@ -15,8 +23,6 @@ const spinWheelRouter = require("./routes/spinWheel");
 const placeBetRouter = require("./routes/placeBet");
 
 require("dotenv").config({ path: "/.env" });
-
-const app = express();
 
 app.use(cors());
 
@@ -51,5 +57,23 @@ const userTableCreate = async () => {
   }
 };
 userTableCreate();
+
+io.on("connection", (socket) => {
+  console.log("user connected 8080");
+  io.emit("hello there", "message");
+
+  console.log(socket.handshake.auth.token, "socket handshake");
+
+  socket.join("Global chat");
+  socket.on("message", (msg) => {
+    io.to("Global chat").emit("chat message", msg);
+    console.log(msg);
+  });
+  socket.on("disconnect", () => {
+    console.log("user dcd");
+  });
+});
+
+server.listen(port);
 
 module.exports = app;
