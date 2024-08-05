@@ -2,8 +2,8 @@ const { sha3_512 } = require("js-sha3");
 const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "./.env" });
 
-function makeToken(username) {
-  const token = jwt.sign({ username }, process.env.JWT_SECRET, {
+function makeToken(username, userID) {
+  const token = jwt.sign({ username, userID }, process.env.JWT_SECRET, {
     expiresIn: "1209600s",
   });
   return token;

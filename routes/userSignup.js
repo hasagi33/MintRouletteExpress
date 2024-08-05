@@ -3,57 +3,86 @@ var router = express.Router();
 const pool = require("../db/pool.js").pool;
 const utility = require("../functions");
 
-//let userNameRegex = /^[a-zA-z0-9_.-]{1}[a-zA-z0-9_.-]{1,25}$/
-// let emailRegex = /^[a-zA-Z0-9._]+@[a-zA-Z]+\.?[a-zA-z]+?\.[a-zA-Z]{1,}$/;
-// let passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\];:'",.<>?\\d]).{6,30}$/;
-// let birthdateRegex = /^[1-2][9,8,0][0-9][0-9]-[0-1][0-9]-[0-9]{2}$/;
-// let specialRegex = /^[0-9]{8}$/;    za pw
-
 router.post("/", async function (req, res) {
-  let username = req.body.name;
-  let email = req.body.mail;
-  let userPW = req.body.password1;
-  let birthdate = req.body.date1;
-  var today = new Date();
+  try {
+    let username = req.body.username;
+    let firstname = req.body.firstname;
+    let surname = req.body.surname;
+    let email = req.body.email;
+    let userPW = req.body.password;
+    let birthday = new Date(req.body.birthday);
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const formattedDate = `${year} ${month} ${day}`;
+    let today = new Date(formattedDate);
 
-  today = today.toISOString().substring(0, 10).replaceAll("-", "");
-  if (today - birthdate > 180000) {
-    if (
-      /^[a-zA-z0-9_.-]{1}[a-zA-z0-9_.-]{1,25}$/.test(username) &&
-      /^[a-zA-Z0-9._]+@[a-zA-Z]+\.?[a-zA-z]+?\.[a-zA-Z]{1,}$/.test(email) &&
-      /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\];:'",.<>?\\d]).{6,30}$/.test(
-        userPW
-      ) &&
-      /[!@#$%^&*()_+{}\[\];:'",.<>?\\]/.test(userPW) &&
-      /^[0-9]{8}$/.test(birthdate)
-    ) {
-      const userExists = await pool.query(
-        'SELECT * FROM "users" WHERE username=($1)',
-        [username]
-      );
-      const emailExists = await pool.query(
-        'SELECT * FROM "users" WHERE email=($1)',
-        [email]
-      );
+    birthday = birthday.toISOString().substring(0, 10).replaceAll("-", "");
+    today = today.toISOString().substring(0, 10).replaceAll("-", "");
 
-      if (userExists.rowCount == 0 && emailExists.rowCount == 0) {
-        let newUserId = utility.makeID(10);
-        const createUser = await pool.query(
-          'INSERT INTO "users" ("serialID","uniqueID","username","email","hashedPW","balance") VALUES (DEFAULT,$1,$2,$3,$4,0)',
-          [newUserId, username, email, utility.hashSaltPassword(userPW)]
+    if (today - birthday > 180000) {
+      if (
+        /.*[A-Za-z].*/.test(username) &&
+        username.length <= 16 &&
+        username.length >= 6 &&
+        /^[A-Za-z]+$/.test(firstname) &&
+        firstname.length <= 40 &&
+        firstname !== "" &&
+        /^[A-Za-z]+$/.test(surname) &&
+        surname.length <= 40 &&
+        surname !== "" &&
+        /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$/.test(email) &&
+        /[!@#$%^&*(),.?":{}|<>]/.test(userPW) &&
+        userPW.length >= 8 &&
+        userPW.length <= 40
+      ) {
+        const userExists = await pool.query(
+          'SELECT * FROM "users" WHERE username=($1)',
+          [username],
         );
-        res.statusCode = 200;
-        res.json({ success: "true" });
+        const emailExists = await pool.query(
+          'SELECT * FROM "users" WHERE email=($1)',
+          [email],
+        );
+        if (userExists.rowCount === 0 && emailExists.rowCount === 0) {
+          let newUserId = utility.makeID(10);
+          const createUser = await pool.query(
+            'INSERT INTO "users" ("serialID","uniqueID","username","firstname","surname","email","birthday","hashedPW","balance") VALUES (DEFAULT,$1,$2,$3,$4,$5,$6,$7,0)',
+            [
+              newUserId,
+              username,
+              firstname,
+              surname,
+              email,
+              birthday,
+              utility.hashSaltPassword(userPW),
+            ],
+          );
+          res.statusCode = 201;
+          res.json({ message: "User Created Successfully" });
+        } else {
+          res.statusCode = 400;
+          if (emailExists.rowCount !== 0) {
+            res.json({ message: "Email already exists" });
+          }
+          if (userExists.rowCount !== 0) {
+            res.json({ message: "Username already exists" });
+          }
+        }
       } else {
-        res.statusCode = 400;
-        res.json({ success: "false", error: "User exists" });
+        console.log(req.body);
+        res.statusCode = 422;
+        res.json({ message: "Wrong Sign up input" });
       }
     } else {
       res.statusCode = 422;
-      res.json({ success: "false", error: "Input is wrong" });
+      res.json({ message: "Underage" });
     }
+    res.end();
+  } catch (e) {
+    console.log(e);
   }
-  res.end();
 });
 
 module.exports = router;

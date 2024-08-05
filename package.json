@@ -18,5 +18,8 @@
     "morgan": "~1.9.1",
     "pg": "^8.11.3",
     "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "prettier": "3.3.3"
   }
 }

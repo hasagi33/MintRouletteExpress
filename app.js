@@ -2,11 +2,10 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const utility=require("./functions");
+const utility = require("./functions");
 const jwt = require("jsonwebtoken");
 const pool = require("./db/pool").pool;
-const cors = require('cors');
-
+const cors = require("cors");
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -18,7 +17,6 @@ const placeBetRouter = require("./routes/placeBet");
 require("dotenv").config({ path: "/.env" });
 
 const app = express();
-
 
 app.use(cors());
 
@@ -39,17 +37,19 @@ const userTableCreate = async () => {
   try {
     const maketable = await pool.query(` CREATE TABLE IF NOT EXISTS users
     (
-        "serialID" serial not null,
-        "uniqueID" varchar,
-        "username"   varchar,
-        "email"      varchar,
-        "hashedPW" varchar,
-        "balance"    integer);`);
+        "serialID"  serial not null,
+        "uniqueID"  varchar,
+        "username"  varchar,
+         "firstname" varchar,
+        "surname"   varchar,
+        "email"     varchar,
+        "birthday"  date,
+        "hashedPW"  varchar,
+        "balance"   integer);`);
   } catch (error) {
     console.log(error);
   }
 };
 userTableCreate();
-
 
 module.exports = app;
