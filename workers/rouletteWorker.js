@@ -1,15 +1,19 @@
 const { workerData, parentPort } = require("worker_threads");
 const math = require("math");
-const purpleMult = 1.2;
-const whiteMult = 1.95;
-const redMult = 3.0;
-const pinkMult = 5.6;
+const blackMult = 1.2;
+const whiteMult = 1.6;
+const blueMult = 3.0;
 const greenMult = 16.0;
+const blackNumbers = [
+  2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
+];
+const whiteNumbers = [3, 7, 9, 13, 15, 19, 21, 23, 27, 29, 33, 35, 39];
+const blueNumbers = [5, 11, 17, 25, 31, 37];
 let currentBets = [];
 
 setInterval(() => {
   spin(currentBets);
-}, 10000);
+}, 28000); // later change to 20000+8000(spin wait+time)
 
 parentPort.on("message", (bets) => {
   console.log("Received message from main thread:", bets);
@@ -56,17 +60,14 @@ function calculateWinnings(bets, colorInner, colorOuter) {
     // console.log(element[1])
     if (element[1] === colorOuter) {
       switch (colorOuter) {
-        case "purple":
-          win *= purpleMult;
+        case "black":
+          win *= blackMult;
           break;
         case "white":
           win *= whiteMult;
           break;
-        case "red":
-          win *= redMult;
-          break;
-        case "pink":
-          win *= pinkMult;
+        case "blue":
+          win *= blueMult;
           break;
         case "green":
           win *= greenMult;
@@ -75,17 +76,14 @@ function calculateWinnings(bets, colorInner, colorOuter) {
     }
     if (element[1] === colorInner) {
       switch (colorInner) {
-        case "purple":
-          win *= purpleMult;
+        case "black":
+          win *= blackMult;
           break;
         case "white":
           win *= whiteMult;
           break;
-        case "red":
-          win *= redMult;
-          break;
-        case "pink":
-          win *= pinkMult;
+        case "blue":
+          win *= blueMult;
           break;
         case "green":
           win *= greenMult;
@@ -102,16 +100,16 @@ function calculateWinnings(bets, colorInner, colorOuter) {
 
 function checkNumberColor(number) {
   let colorOfNumber;
-  if (number % 2 === 0) {
-    colorOfNumber = "purple";
-  } else if ((number + 1) % 4 === 0) {
+  if (blackNumbers.includes(number)) {
+    colorOfNumber = "black";
+  } else if (whiteNumbers.includes(number)) {
     colorOfNumber = "white";
-  } else if ((number - 1) % 4 === 0 && (number + 3) % 8 !== 0 && number !== 1) {
-    colorOfNumber = "red";
-  } else if ((number - 1) % 4 === 0 && number !== 1) {
-    colorOfNumber = "pink";
+  } else if (blueNumbers.includes(number)) {
+    colorOfNumber = "blue";
   } else if (number === 1) {
     colorOfNumber = "green";
   }
   return colorOfNumber;
 }
+
+//

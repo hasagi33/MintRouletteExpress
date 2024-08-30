@@ -4,7 +4,7 @@ const pool = require("../db/pool.js").pool;
 const utility = require("../functions");
 const events = require("events");
 const authenticateToken = require("../middleware/authenticateToken");
-const createWorker = require("../workers/workerSpawner");
+const workerSpawner = require("../workers/workerSpawner");
 let bettingUsers = {};
 
 let em = new events.EventEmitter();
@@ -13,7 +13,7 @@ em.on("Clear Bets", function () {
   bettingUsers = {};
 });
 
-createWorker({}, em);
+workerSpawner.createWorker({}, em);
 
 router.post("/", authenticateToken, async function (req, res, next) {
   try {

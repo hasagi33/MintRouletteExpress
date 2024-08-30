@@ -12,9 +12,6 @@ const http = require("http");
 const { static } = require("express");
 const server = http.createServer(app);
 
-const io = require("socket.io")(server, {});
-const port = 8080;
-
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const userSignupRouter = require("./routes/userSignup");
@@ -41,7 +38,7 @@ app.use("/placeBet", placeBetRouter);
 
 const userTableCreate = async () => {
   try {
-    const maketable = await pool.query(` CREATE TABLE IF NOT EXISTS users
+    const makeusertable = await pool.query(` CREATE TABLE IF NOT EXISTS users
     (
         "serialID"  serial not null,
         "uniqueID"  varchar,
@@ -56,24 +53,23 @@ const userTableCreate = async () => {
     console.log(error);
   }
 };
+const rouletteSpinsTableCreate = async () => {
+  try {
+    const makespinstable =
+      await pool.query(` CREATE TABLE IF NOT EXISTS rouletteSpins
+    (
+    "time"        date    not null,
+    "numberInner" integer not null,
+    "numberOuter" integer not null,
+    "colorInner"  integer not null,
+    "colorOuter"  integer not null,
+    "wins"        varchar ARRAY);`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+rouletteSpinsTableCreate();
 userTableCreate();
-
-io.on("connection", (socket) => {
-  console.log("user connected 8080");
-  io.emit("hello there", "message");
-
-  console.log(socket.handshake.auth.token, "socket handshake");
-
-  socket.join("Global chat");
-  socket.on("message", (msg) => {
-    io.to("Global chat").emit("chat message", msg);
-    console.log(msg);
-  });
-  socket.on("disconnect", () => {
-    console.log("user dcd");
-  });
-});
-
-server.listen(port);
 
 module.exports = app;
