@@ -18,6 +18,7 @@ const userSignupRouter = require("./routes/userSignup");
 const userLoginRouter = require("./routes/userLogin");
 const spinWheelRouter = require("./routes/spinWheel");
 const placeBetRouter = require("./routes/placeBet");
+const depositFundsRouter = require("./routes/depositFunds");
 
 require("dotenv").config({ path: "/.env" });
 
@@ -35,6 +36,7 @@ app.use("/userLogin", userLoginRouter);
 app.use("/userSignup", userSignupRouter);
 app.use("/spinWheel", spinWheelRouter);
 app.use("/placeBet", placeBetRouter);
+app.use("/depositFunds", depositFundsRouter);
 
 const userTableCreate = async () => {
   try {
@@ -48,7 +50,7 @@ const userTableCreate = async () => {
         "email"     varchar,
         "birthday"  date,
         "hashedPW"  varchar,
-        "balance"   integer);`);
+        "balance"   decimal);`);
   } catch (error) {
     console.log(error);
   }
@@ -58,11 +60,11 @@ const rouletteSpinsTableCreate = async () => {
     const makespinstable =
       await pool.query(` CREATE TABLE IF NOT EXISTS rouletteSpins
     (
-    "time"        date    not null,
+    "time"        bigint  not null,
     "numberInner" integer not null,
     "numberOuter" integer not null,
-    "colorInner"  integer not null,
-    "colorOuter"  integer not null,
+    "colorInner"  varchar not null,
+    "colorOuter"  varchar not null,
     "wins"        varchar ARRAY);`);
   } catch (error) {
     console.log(error);
@@ -71,5 +73,11 @@ const rouletteSpinsTableCreate = async () => {
 
 rouletteSpinsTableCreate();
 userTableCreate();
+
+// const PORT = process.env.PORT || 3000;
+
+// server.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
 
 module.exports = app;

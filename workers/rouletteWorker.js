@@ -13,7 +13,7 @@ let currentBets = [];
 
 setInterval(() => {
   spin(currentBets);
-}, 28000); // later change to 20000+8000(spin wait+time)
+}, 35000); // later change to 20000+8000+7000(spin wait+time+end screen)
 
 parentPort.on("message", (bets) => {
   console.log("Received message from main thread:", bets);
@@ -31,6 +31,9 @@ function spin(bets) {
     colorOuter = rollNumberValues[3];
 
   let wins = calculateWinnings(bets, colorInner, colorOuter);
+
+  console.log(wins);
+
   parentPort.postMessage({
     numberInner: randomInner,
     numberOuter: randomOuter,
@@ -57,7 +60,6 @@ function calculateWinnings(bets, colorInner, colorOuter) {
   bets.forEach((element, index) => {
     let win = element[0];
     let startBet = win;
-    // console.log(element[1])
     if (element[1] === colorOuter) {
       switch (colorOuter) {
         case "black":
@@ -91,9 +93,9 @@ function calculateWinnings(bets, colorInner, colorOuter) {
       }
     }
     if (win === startBet) {
-      win = 0;
+      win = -startBet;
     }
-    winnings.push([win, bets[index][2]]);
+    winnings.push([win.toFixed(3), bets[index][2]]);
   });
   return winnings;
 }

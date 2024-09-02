@@ -28,11 +28,16 @@ router.post("/", authenticateToken, async function (req, res, next) {
       'SELECT * FROM "users" WHERE username=($1)',
       [username],
     );
+
     let alreadyBet = 0;
+
     if (bettingUsers.hasOwnProperty(username)) {
-      alreadyBet = bettingUsers.username;
+      alreadyBet = bettingUsers[username];
     }
-    if (findPwInDb.rows[0].balance - alreadyBet >= betAmount || true) {
+
+    console.log(findPwInDb.rows[0].balance - alreadyBet);
+
+    if (findPwInDb.rows[0].balance - alreadyBet >= betAmount) {
       // DISABLE TRUE----
       bets.push([betAmount, betColor, username]);
       em.emit("NewBet", Object.assign({}, bets));
@@ -42,9 +47,6 @@ router.post("/", authenticateToken, async function (req, res, next) {
         bettingUsers[username] = Number(betAmount);
       }
     }
-    console.log(bettingUsers);
-
-    // console.log(bets);
 
     res.send();
   } catch (e) {

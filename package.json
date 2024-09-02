@@ -16,6 +16,7 @@
     "jsonwebtoken": "^9.0.2",
     "math": "^0.0.3",
     "morgan": "~1.9.1",
+    "nodemailer": "^6.9.14",
     "pg": "^8.11.3",
     "socket.io": "^4.7.5"
   },

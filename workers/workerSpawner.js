@@ -29,8 +29,6 @@ io.on("connection", (socket) => {
     io.emit("error", "Try again later");
   }
 
-  console.log(socket.handshake.auth.token, "socket handshake");
-
   socket.join("Global chat");
   socket.on("message", (msg) => {
     io.to("Global chat").emit("chat message", msg);
@@ -49,24 +47,27 @@ function createWorker(workerData, em) {
     throw err;
   });
   worker.on("message", (msg) => {
-    console.log(msg);
     em.emit("Clear Bets");
     io.emit("bet results", msg);
     pastSpins.push({
       colorInner: msg.colorInner,
       colorOuter: msg.colorOuter,
+      numberInner: msg.numberInner,
+      numberOuter: msg.numberOuter,
       dateNow: Date.now(),
     });
     if (pastSpins.length > 30) {
       pastSpins.shift();
     }
-    // createSpin(
-    //   msg.numberInner,
-    //   msg.numberOuter,
-    //   msg.colorInner,
-    //   msg.colorOuter,
-    //   msg.wins,
-    // );
+
+    createSpin(
+      msg.numberInner,
+      msg.numberOuter,
+      msg.colorInner,
+      msg.colorOuter,
+      msg.wins,
+    );
+    updateBalance(msg.wins);
   });
 
   worker.on("exit", () => {});
@@ -78,18 +79,47 @@ function createWorker(workerData, em) {
   });
 }
 
-// const createSpin = async (
-//   numberInner,
-//   numberOuter,
-//   colorInner,
-//   colorOuter,
-//   wins,
-// ) => {
-//   const createNewSpin = await pool.query(
-//     'INSERT INTO "rouletteSpins" ("time","numberInner","numberOuter","colorInner","colorOuter","wins",) VALUES ($1,$2,$3,$4,$5,$6)',
-//     [Date.now(), numberInner, numberOuter, colorInner, colorOuter, wins],
-//   );
-// };
+const createSpin = async (
+  numberInner,
+  numberOuter,
+  colorInner,
+  colorOuter,
+  wins,
+) => {
+  const createNewSpin = await pool.query(
+    'INSERT INTO "roulettespins" ("time","numberInner","numberOuter","colorInner","colorOuter","wins") VALUES ($1,$2,$3,$4,$5,$6)',
+    [Date.now(), numberInner, numberOuter, colorInner, colorOuter, wins],
+  );
+};
+const updateBalance = async (wins) => {
+  let winsObject = {};
+
+  wins.forEach((element) => {
+    if (winsObject[element[1]]) {
+      winsObject[element[1]] += Number(element[0]);
+    } else {
+      winsObject[element[1]] = Number(element[0]);
+    }
+  });
+  console.log(winsObject);
+
+  let balanceQueryString = "";
+
+  for (const [key, value] of Object.entries(winsObject)) {
+    console.log(`${key}: ${value}`);
+    // balanceQueryArray.push(
+    //   "UPDATE users SET balance=(" + value + ") WHERE username=(" + key + ")",
+    // );
+    balanceQueryString +=
+      "UPDATE users SET balance=balance+" +
+      value +
+      " WHERE username='" +
+      key +
+      "';";
+  }
+  console.log(balanceQueryString);
+  const depositUserBalance = await pool.query(balanceQueryString);
+};
 
 module.exports = {
   createWorker,
